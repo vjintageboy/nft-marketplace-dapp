@@ -21,7 +21,7 @@
 ;; Variable to track the ID of the last token created.
 (define-data-var last-token-id uint u0)
 ;; Base URL to get NFT metadata (images).
-(define-data-var base-uri (string-ascii 256) "https://example.com/api/dogs/") ;; TODO: Replace with your actual URL
+(define-data-var base-uri (string-ascii 256) "http://localhost:3000/api/dogs/")
 
 ;; ---------------------------------------------------------
 ;; --- Public Functions
@@ -56,6 +56,18 @@
   )
 )
 
+;; @desc Update the base URI for metadata (only contract owner)
+;; @param new-base-uri New base URI string
+(define-public (set-base-uri (new-base-uri (string-ascii 256)))
+  (begin
+    ;; Only contract owner can update base URI
+    (asserts! (is-eq tx-sender CONTRACT-OWNER) ERR-NOT-AUTHORIZED)
+    ;; Update the base URI
+    (var-set base-uri new-base-uri)
+    (ok true)
+  )
+)
+
 ;; ---------------------------------------------------------
 ;; --- Read-Only Functions
 ;; ---------------------------------------------------------
@@ -74,6 +86,6 @@
 ;; @desc Get the URI (path) to the metadata of an NFT.
 ;; @param token-id ID of the NFT.
 (define-read-only (get-token-uri (token-id uint))
-  ;; Return base URI - in production, you would implement proper token ID to string conversion
+  ;; Return base URI - frontend will append token ID
   (ok (some (var-get base-uri)))
 )

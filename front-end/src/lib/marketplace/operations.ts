@@ -21,6 +21,7 @@ import { getMarketplaceContract } from '@/constants/contracts';
 import { getApi } from '@/lib/stacks-api';
 import { Network } from '@/lib/network';
 import { ContractCallRegularOptions } from '@stacks/connect';
+import { mockListings } from '@/lib/mock-data';
 const baseContractCall = {
   anchorMode: AnchorMode.Any,
   postConditionMode: PostConditionMode.Deny,
@@ -199,14 +200,12 @@ const fetchListing = async (network: Network, listingId: number): Promise<Listin
   const api = getApi(network).smartContractsApi;
   const marketplaceContract = getMarketplaceContract(network);
   try {
-    const response = await api.callReadOnlyFunction({
-      ...marketplaceContract,
-      functionName: 'get-listing',
-      readOnlyFunctionArgs: {
-        sender: marketplaceContract.contractAddress,
-        arguments: [`0x${serializeCV(uintCV(listingId)).toString()}`],
-      },
-    });
+    const response = await api.callReadOnlyFunction(
+      marketplaceContract.contractAddress,
+      marketplaceContract.contractName,
+      'get-listing',
+      [uintCV(listingId)]
+    );
 
     const clarityValue = parseReadOnlyResponse(response);
     if (!clarityValue) return undefined;
@@ -220,6 +219,12 @@ const fetchListing = async (network: Network, listingId: number): Promise<Listin
 };
 
 export async function fetchListings(network: Network, maxId: number = 10): Promise<Listing[]> {
+  // Use mock data if enabled in development
+  if (process.env.NEXT_PUBLIC_USE_MOCK_DATA === 'true') {
+    console.log('Using mock data for listings');
+    return mockListings;
+  }
+
   const allListings: Listing[] = [];
   const batchSize = 4;
 

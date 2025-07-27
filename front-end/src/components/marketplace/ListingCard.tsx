@@ -14,6 +14,9 @@ import {
   Box,
   Flex,
   Link,
+  Badge,
+  HStack,
+  VStack,
 } from '@chakra-ui/react';
 import { cancelListing, purchaseListingStx } from '@/lib/marketplace/operations';
 import { useContext, useState, useEffect } from 'react';
@@ -21,13 +24,14 @@ import { HiroWalletContext } from '../HiroWalletProvider';
 import { shouldUseDirectCall } from '@/lib/contract-utils';
 import { executeContractCall } from '@/lib/contract-utils';
 import { useDevnetWallet } from '@/lib/devnet-wallet-context';
-import { useGetTxId } from '@/hooks/useNftHoldings';
+// import { useGetTxId } from '@/hooks/useNftHoldings';
 import { formatContractName } from '@/utils/formatting';
 import { getPlaceholderImage } from '@/utils/nft-utils';
 import { useNetwork } from '@/lib/use-network';
 import { useCurrentAddress } from '@/hooks/useCurrentAddress';
 import { ExternalLinkIcon } from '@chakra-ui/icons';
 import { getExplorerLink } from '@/utils/explorer-links';
+import { NftImage } from './NftImage';
 
 interface ListingCardProps {
   listing: {
@@ -50,7 +54,8 @@ export const ListingCard = ({ listing, onRefresh }: ListingCardProps) => {
   const [purchaseTxId, setPurchaseTxId] = useState<string | null>(null);
   const network = useNetwork();
   const currentAddress = useCurrentAddress();
-  const { data: txData } = useGetTxId(purchaseTxId || '');
+  // const { data: txData } = useGetTxId(purchaseTxId || '');
+  const txData = null; // Temporary mock
 
   useEffect(() => {
     // @ts-ignore
@@ -154,49 +159,86 @@ export const ListingCard = ({ listing, onRefresh }: ListingCardProps) => {
 
   if (!network) return null;
 
+  const isOwner = currentAddress === listing.maker;
+  const priceInStx = listing.price / 1000000;
+
   return (
     <Card
       maxW="sm"
       cursor="pointer"
-      transition="transform 0.2s"
-      _hover={{ transform: 'scale(1.02)' }}
+      transition="all 0.2s"
+      _hover={{ transform: 'translateY(-4px)', boxShadow: 'xl' }}
       overflow="hidden"
-      boxShadow="lg"
+      boxShadow="md"
+      bg="white"
+      borderRadius="xl"
     >
-      <CardBody padding={0}>
-        <Box aspectRatio={1} overflow="hidden">
-          {getPlaceholderImage(network, listing.nftAssetContract, listing.tokenId) != null ? (
-            <Image
-              src={getPlaceholderImage(network, listing.nftAssetContract, listing.tokenId) || ''}
-              alt={`NFT #${listing.tokenId}`}
-              borderRadius="lg"
-              width="100%"
-              height="100%"
-              objectFit="cover"
-            />
-          ) : (
-            <Box width="100%" height="100%" bg="gray.100" borderRadius="lg" />
+      <CardBody p={0}>
+        <Box position="relative">
+          <NftImage 
+            tokenId={listing.tokenId} 
+            contractId={listing.nftAssetContract}
+            size="100%"
+          />
+          {isOwner && (
+            <Badge
+              position="absolute"
+              top={2}
+              right={2}
+              colorScheme="green"
+              fontSize="xs"
+              borderRadius="md"
+            >
+              Your NFT
+            </Badge>
           )}
         </Box>
-        <Stack spacing={2} p={4}>
-          <Heading size="md">NFT #{listing.tokenId}</Heading>
-          <Text fontSize="sm" color="gray.500">
-            {formatContractName(listing.nftAssetContract)}
-          </Text>
-          <Flex justify="space-between" align="center">
-            <Text color="orange.500" fontWeight="bold">
-              {listing.price / 1000000} STX
+        
+        <VStack spacing={3} p={4} align="stretch">
+          <VStack spacing={1} align="start">
+            <Heading size="md" color="gray.800">
+              {formatContractName(listing.nftAssetContract)} #{listing.tokenId}
+            </Heading>
+            <Text fontSize="sm" color="gray.500">
+              Collection: {formatContractName(listing.nftAssetContract)}
             </Text>
-            <Text fontSize="xs" color="gray.400">
-              By {listing.maker.slice(0, 6)}...
-            </Text>
-          </Flex>
-        </Stack>
+          </VStack>
+
+          <HStack justify="space-between" align="center">
+            <VStack spacing={0} align="start">
+              <Text fontSize="xs" color="gray.400">Price</Text>
+              <Text color="orange.500" fontWeight="bold" fontSize="lg">
+                {priceInStx} STX
+              </Text>
+            </VStack>
+            <VStack spacing={0} align="end">
+              <Text fontSize="xs" color="gray.400">Seller</Text>
+              <Text fontSize="sm" color="gray.600">
+                {listing.maker.slice(0, 6)}...{listing.maker.slice(-4)}
+              </Text>
+            </VStack>
+          </HStack>
+
+          {listing.taker && (
+            <HStack>
+              <Badge colorScheme="blue" fontSize="xs">
+                Reserved for: {listing.taker.slice(0, 6)}...
+              </Badge>
+            </HStack>
+          )}
+        </VStack>
       </CardBody>
+      
       <CardFooter pt={0} px={4} pb={4}>
-        <Stack spacing={2} width="100%">
-          {listing.maker === testnetAddress || listing.maker === mainnetAddress ? (
-            <Button colorScheme="orange" onClick={handleCancel}>
+        <VStack spacing={3} width="100%">
+          {isOwner ? (
+            <Button 
+              colorScheme="red" 
+              variant="outline"
+              onClick={handleCancel}
+              width="100%"
+              size="sm"
+            >
               Cancel Listing
             </Button>
           ) : (
@@ -205,21 +247,27 @@ export const ListingCard = ({ listing, onRefresh }: ListingCardProps) => {
               onClick={handlePurchase}
               isLoading={!!purchaseTxId && !txData}
               loadingText="Purchasing..."
+              width="100%"
+              size="lg"
+              fontSize="md"
+              fontWeight="bold"
             >
-              Purchase
+              Buy for {priceInStx} STX
             </Button>
           )}
+          
           {purchaseTxId && (
             <Link
               href={getExplorerLink(purchaseTxId, network)}
               isExternal
               color="blue.500"
               fontSize="sm"
+              _hover={{ textDecoration: 'underline' }}
             >
               View transaction <ExternalLinkIcon mx="2px" />
             </Link>
           )}
-        </Stack>
+        </VStack>
       </CardFooter>
     </Card>
   );
