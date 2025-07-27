@@ -221,10 +221,11 @@ const fetchListing = async (network: Network, listingId: number): Promise<Listin
 export async function fetchListings(network: Network, maxId: number = 10): Promise<Listing[]> {
   // Use mock data if enabled in development
   if (process.env.NEXT_PUBLIC_USE_MOCK_DATA === 'true') {
-    console.log('Using mock data for listings');
+    console.log('🎭 Using mock data for listings (demo mode)');
     return mockListings;
   }
 
+  console.log('🌐 Fetching real listings from devnet...');
   const allListings: Listing[] = [];
   const batchSize = 4;
 
@@ -239,5 +240,6 @@ export async function fetchListings(network: Network, maxId: number = 10): Promi
     );
   }
 
+  console.log(`📋 Found ${allListings.length} real listings`);
   return allListings;
 }

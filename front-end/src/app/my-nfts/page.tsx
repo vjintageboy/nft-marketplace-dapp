@@ -14,7 +14,7 @@ import {
   Image,
 } from '@chakra-ui/react';
 import { NftCard } from '@/components/marketplace/NftCard';
-import { useNftHoldings, useGetTxId } from '@/hooks/useNftHoldings';
+import { useNftHoldings } from '@/hooks/useNftHoldings';
 import { formatValue } from '@/lib/clarity-utils';
 import { mintFunnyDogNFT } from '@/lib/nft/operations';
 import { useNetwork } from '@/lib/use-network';
@@ -31,7 +31,8 @@ export default function MyNFTsPage() {
   const network = useNetwork();
   const { currentWallet } = useDevnetWallet();
   const { data: nftHoldings, isLoading: nftHoldingsLoading } = useNftHoldings(currentAddress || '');
-  const { data: txData } = useGetTxId(lastTxId || '');
+  // const { data: txData } = useGetTxId(lastTxId || '');
+  const txData = null; // Temporary mock
   const toast = useToast();
 
   useEffect(() => {
@@ -152,7 +153,7 @@ export default function MyNFTsPage() {
         </Text>
         <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={6}>
           {nftHoldings?.results && nftHoldings.results.length > 0
-            ? nftHoldings.results.map((holding) => (
+            ? nftHoldings.results.map((holding: any) => (
                 <NftCard
                   key={holding.asset_identifier}
                   nft={{
