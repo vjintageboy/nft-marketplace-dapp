@@ -27,7 +27,7 @@ plan:
         - contract-publish:
             contract-name: funny-dog
             expected-sender: ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM
-            cost: 29020
+            cost: 32020
             path: contracts/funny-dog.clar
             anchor-block-only: true
             clarity-version: 1
@@ -51,43 +51,4 @@ plan:
             path: contracts/nft-marketplace.clar
             anchor-block-only: true
             clarity-version: 3
-      epoch: "3.0"
-    - id: 3
-      transactions:
-        # Mint some initial NFTs for testing
-        - contract-call:
-            contract-id: ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM.funny-dog
-            expected-sender: ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM
-            method: mint
-            parameters:
-              - "'ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM"
-            cost: 6960
-        - contract-call:
-            contract-id: ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM.funny-dog
-            expected-sender: ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM
-            method: mint
-            parameters:
-              - "'ST2CY5V39NHDPWSXMW9QDT3HC3GD6Q6XX4CFRK9AG"
-            cost: 6960
-        - contract-call:
-            contract-id: ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM.funny-dog
-            expected-sender: ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM
-            method: mint
-            parameters:
-              - "'ST2JHG361ZXG51QTKY2NQCVBPPRRE2KZB1HR05NNC"
-            cost: 6960
-        - contract-call:
-            contract-id: ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM.funny-dog
-            expected-sender: ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM
-            method: mint
-            parameters:
-              - "'ST2NEB84ASENDXKYGJPQW86YXQCEFEX2ZQPG87ND"
-            cost: 6960
-        - contract-call:
-            contract-id: ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM.funny-dog
-            expected-sender: ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM
-            method: mint
-            parameters:
-              - "'ST2REHHS5J3CERCRBEPMGH7921Q6PYKAADT7JP2VB"
-            cost: 6960
       epoch: "3.0"
