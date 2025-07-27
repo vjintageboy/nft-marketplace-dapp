@@ -10,24 +10,24 @@ plan:
       transactions:
         - requirement-publish:
             contract-id: SP2PABAF9FTAJYNFZH93XENAJ8FVY99RRM50D2JG9.nft-trait
-            remap-sender: ST3RHVKR3T0TGA85YY7X0K85Q3C0ZYNJW90TFA98F
+            remap-sender: ST18CVFSW933H5PAZ02F753MWAMH1APCEDB3TQPFT
             remap-principals:
-              SP2PABAF9FTAJYNFZH93XENAJ8FVY99RRM50D2JG9: ST3RHVKR3T0TGA85YY7X0K85Q3C0ZYNJW90TFA98F
+              SP2PABAF9FTAJYNFZH93XENAJ8FVY99RRM50D2JG9: ST18CVFSW933H5PAZ02F753MWAMH1APCEDB3TQPFT
             cost: 4680
             path: "./.cache/requirements/SP2PABAF9FTAJYNFZH93XENAJ8FVY99RRM50D2JG9.nft-trait.clar"
             clarity-version: 1
         - requirement-publish:
             contract-id: SP3FBR2AGK5H9QBDH3EEN6DF8EK8JY7RX8QJ5SVTE.sip-010-trait-ft-standard
-            remap-sender: ST3RHVKR3T0TGA85YY7X0K85Q3C0ZYNJW90TFA98F
+            remap-sender: ST18CVFSW933H5PAZ02F753MWAMH1APCEDB3TQPFT
             remap-principals:
-              SP3FBR2AGK5H9QBDH3EEN6DF8EK8JY7RX8QJ5SVTE: ST3RHVKR3T0TGA85YY7X0K85Q3C0ZYNJW90TFA98F
+              SP3FBR2AGK5H9QBDH3EEN6DF8EK8JY7RX8QJ5SVTE: ST18CVFSW933H5PAZ02F753MWAMH1APCEDB3TQPFT
             cost: 8400
             path: "./.cache/requirements/SP3FBR2AGK5H9QBDH3EEN6DF8EK8JY7RX8QJ5SVTE.sip-010-trait-ft-standard.clar"
             clarity-version: 1
         - contract-publish:
             contract-name: funny-dog
-            expected-sender: ST3RHVKR3T0TGA85YY7X0K85Q3C0ZYNJW90TFA98F
-            cost: 2917
+            expected-sender: ST18CVFSW933H5PAZ02F753MWAMH1APCEDB3TQPFT
+            cost: 3217
             path: contracts/funny-dog.clar
             anchor-block-only: true
             clarity-version: 1
@@ -36,7 +36,7 @@ plan:
       transactions:
         - contract-publish:
             contract-name: bounty-contract
-            expected-sender: ST3RHVKR3T0TGA85YY7X0K85Q3C0ZYNJW90TFA98F
+            expected-sender: ST18CVFSW933H5PAZ02F753MWAMH1APCEDB3TQPFT
             cost: 3379
             path: contracts/bounty-contract.clar
             anchor-block-only: true
@@ -46,7 +46,7 @@ plan:
       transactions:
         - contract-publish:
             contract-name: nft-marketplace
-            expected-sender: ST3RHVKR3T0TGA85YY7X0K85Q3C0ZYNJW90TFA98F
+            expected-sender: ST18CVFSW933H5PAZ02F753MWAMH1APCEDB3TQPFT
             cost: 6030
             path: contracts/nft-marketplace.clar
             anchor-block-only: true
