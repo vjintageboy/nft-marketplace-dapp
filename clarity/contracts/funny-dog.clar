@@ -1,61 +1,79 @@
-;; This contract implements the SIP-009 community-standard Non-Fungible Token trait
-(impl-trait 'SP2PABAF9FTAJYNFZH93XENAJ8FVY99RRM50D2JG9.nft-trait.nft-trait)
-;; (impl-trait 'STM6S3AESTK9NAYE3Z7RS00T11ER8JJCDNTKG711.nft-trait.nft-trait)
+;; ---------------------------------------------------------
+;; --- NFT Collection Contract: Funny Dog
+;; ---
+;; --- This contract defines an NFT collection following the SIP-009 standard.
+;; --- It manages minting, transfer, and ownership of NFTs.
+;; ---------------------------------------------------------
 
-;; Define the NFT's name
+;; Import the NFT trait
+(use-trait nft-trait 'SP2PABAF9FTAJYNFZH93XENAJ8FVY99RRM50D2JG9.nft-trait.nft-trait)
+
+;; Inherit functions from the standard NFT trait.
+(impl-trait 'SP2PABAF9FTAJYNFZH93XENAJ8FVY99RRM50D2JG9.nft-trait.nft-trait)
+
+;; Define a new non-fungible token named 'funny-dog' with uint ID.
 (define-non-fungible-token funny-dog uint)
 
-;; Keep track of the last minted token ID
+;; --- Constants and Variables
+(define-constant CONTRACT-OWNER tx-sender) ;; Contract owner, the deployer.
+(define-constant ERR-NOT-AUTHORIZED (err u401)) ;; Error: Not authorized.
+
+;; Variable to track the ID of the last token created.
 (define-data-var last-token-id uint u0)
+;; Base URL to get NFT metadata (images).
+(define-data-var base-uri (string-ascii 256) "https://example.com/api/dogs/") ;; TODO: Replace with your actual URL
 
-;; Define constants
-(define-constant CONTRACT_OWNER tx-sender)
-(define-constant COLLECTION_LIMIT u10000000) ;; Limit to series of 10M
+;; ---------------------------------------------------------
+;; --- Public Functions
+;; ---------------------------------------------------------
 
-(define-constant ERR_OWNER_ONLY (err u100))
-(define-constant ERR_NOT_TOKEN_OWNER (err u101))
-(define-constant ERR_SOLD_OUT (err u300))
-
-(define-data-var base-uri (string-ascii 80) "https://placedog.net/500/500?id={id}")
-
-;; SIP-009 function: Get the last minted token ID.
-(define-read-only (get-last-token-id)
-  (ok (var-get last-token-id))
-)
-
-;; SIP-009 function: Get link where token metadata is hosted
-(define-read-only (get-token-uri (token-id uint))
-  (ok (some (var-get base-uri)))
-)
-
-;; SIP-009 function: Get the owner of a given token
-(define-read-only (get-owner (token-id uint))
-  (ok (nft-get-owner? funny-dog token-id))
-)
-
-;; SIP-009 function: Transfer NFT token to another owner.
+;; @desc Transfer an NFT from sender to recipient.
+;; @param token-id ID of the NFT to transfer.
+;; @param sender Current owner.
+;; @param recipient New recipient.
 (define-public (transfer (token-id uint) (sender principal) (recipient principal))
   (begin
-    ;; #[filter(sender)]
-    (asserts! (is-eq tx-sender sender) ERR_NOT_TOKEN_OWNER)
+    ;; Only the NFT owner can transfer it.
+    (asserts! (is-eq tx-sender sender) ERR-NOT-AUTHORIZED)
+    ;; Execute the NFT transfer.
     (nft-transfer? funny-dog token-id sender recipient)
   )
 )
 
-;; Mint a new NFT.
-(define-public (mint (recipient principal))
-  ;; Create the new token ID by incrementing the last minted ID.
-  (let ((token-id (+ (var-get last-token-id) u1)))
-    ;; Ensure the collection stays within the limit.
-    (asserts! (< (var-get last-token-id) COLLECTION_LIMIT) ERR_SOLD_OUT)
-    ;; Only the contract owner can mint.
-    ;; (asserts! (is-eq tx-sender CONTRACT_OWNER) ERR_OWNER_ONLY)
-    ;; Mint the NFT and send it to the given recipient.
-    (try! (nft-mint? funny-dog token-id recipient))
-
-    ;; Update the last minted token ID.
+;; @desc "Mint" a new NFT for a specified recipient.
+;; @param to Principal address to receive the NFT.
+(define-public (mint (to principal))
+  (let
+    (
+      ;; Create ID for new token by taking last ID + 1.
+      (token-id (+ u1 (var-get last-token-id)))
+    )
+    ;; Mint new NFT and assign ownership to specified recipient.
+    (try! (nft-mint? funny-dog token-id to))
+    ;; Update the last token ID.
     (var-set last-token-id token-id)
-    ;; Return a success status and the newly minted NFT ID.
     (ok token-id)
   )
+)
+
+;; ---------------------------------------------------------
+;; --- Read-Only Functions
+;; ---------------------------------------------------------
+
+;; @desc Get the ID of the last token created.
+(define-read-only (get-last-token-id)
+  (ok (var-get last-token-id))
+)
+
+;; @desc Get the wallet address of the owner of a specific NFT.
+;; @param token-id ID of the NFT to check.
+(define-read-only (get-owner (token-id uint))
+  (ok (nft-get-owner? funny-dog token-id))
+)
+
+;; @desc Get the URI (path) to the metadata of an NFT.
+;; @param token-id ID of the NFT.
+(define-read-only (get-token-uri (token-id uint))
+  ;; Return base URI - in production, you would implement proper token ID to string conversion
+  (ok (some (var-get base-uri)))
 )

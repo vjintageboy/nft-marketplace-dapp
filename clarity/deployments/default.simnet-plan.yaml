@@ -70,6 +70,11 @@ plan:
             path: "./.cache/requirements/SP3FBR2AGK5H9QBDH3EEN6DF8EK8JY7RX8QJ5SVTE.sip-010-trait-ft-standard.clar"
             clarity-version: 1
         - emulated-contract-publish:
+            contract-name: bounty-contract
+            emulated-sender: ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM
+            path: contracts/bounty-contract.clar
+            clarity-version: 1
+        - emulated-contract-publish:
             contract-name: funny-dog
             emulated-sender: ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM
             path: contracts/funny-dog.clar
