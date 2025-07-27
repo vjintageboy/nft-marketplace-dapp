@@ -27,15 +27,28 @@ plan:
         - contract-publish:
             contract-name: funny-dog
             expected-sender: ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM
-            cost: 21410
+            cost: 29020
             path: contracts/funny-dog.clar
             anchor-block-only: true
             clarity-version: 1
+      epoch: "2.0"
+    - id: 1
+      transactions:
+        - contract-publish:
+            contract-name: bounty-contract
+            expected-sender: ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM
+            cost: 33580
+            path: contracts/bounty-contract.clar
+            anchor-block-only: true
+            clarity-version: 1
+      epoch: "2.05"
+    - id: 2
+      transactions:
         - contract-publish:
             contract-name: nft-marketplace
             expected-sender: ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM
-            cost: 92780
+            cost: 60090
             path: contracts/nft-marketplace.clar
             anchor-block-only: true
-            clarity-version: 1
-      epoch: "2.0"
+            clarity-version: 3
+      epoch: "3.0"
